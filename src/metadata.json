@@ -1,0 +1,9 @@
+{
+  "name": "RebootToUEFI",
+  "description": "Reboot system into UEFI",
+  "license": "GPLv3",
+  "uuid": "reboottouefi@ubaygd.com",
+  "shell-version": [
+    "42"
+  ]
+}
