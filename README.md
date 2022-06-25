@@ -25,6 +25,6 @@ To install the extension just run the **install.sh** script with the following c
 
 # Notes
 
-- At some point this extension will be available for installation from the [GNOME Extensions](https://extensions.gnome.org/) web site.
+- This extension is available in [GNOME Extensions](https://extensions.gnome.org/extension/5105/reboottouefi/).
 
 - This extension has been tested on Gnome 42 only.
