@@ -3,6 +3,8 @@
   "description": "Reboot system into UEFI",
   "license": "GPLv3",
   "uuid": "reboottouefi@ubaygd.com",
+  "url": "https://github.com/UbayGD/reboottouefi",
+  "version": "2",
   "shell-version": [
     "42"
   ]
