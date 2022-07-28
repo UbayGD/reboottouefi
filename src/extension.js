@@ -48,29 +48,29 @@ class Extension {
   #rebootToUefiItem;
 
   constructor() {
-    this.systemIndicator = panel.statusArea.aggregateMenu._system;
+    this.#systemIndicator = panel.statusArea.aggregateMenu._system;
   }
 
   enable() {
-    this.proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
-      
-    this.rebootToUefiItem = new PopupMenu.PopupImageMenuItem(_('Restart to UEFI'), '');
-    this.rebootToUefiItem.connect('activate', () => {
+    this.#proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
+
+    this.#rebootToUefiItem = new PopupMenu.PopupImageMenuItem(_('Restart to UEFI'), '');
+    this.#rebootToUefiItem.connect('activate', () => {
       this._reboot();
     });
 
-    this.systemIndicator._sessionSubMenu.menu.addMenuItem(this.rebootToUefiItem, 2);
+    this.#systemIndicator._sessionSubMenu.menu.addMenuItem(this.#rebootToUefiItem, 2);
   }
 
   disable() {
-    this.rebootToUefiItem.destroy();
-    this.rebootToUefiItem = null;
-    this.proxy = null;
+    this.#rebootToUefiItem.destroy();
+    this.#rebootToUefiItem = null;
+    this.#proxy = null;
   }
 
   _reboot() {
-    this.proxy.SetRebootToFirmwareSetupRemote(true);
-    this.proxy.RebootRemote(false);
+    this.#proxy.SetRebootToFirmwareSetupRemote(true);
+    this.#proxy.RebootRemote(false);
   }
 }
 
