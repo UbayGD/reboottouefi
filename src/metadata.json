@@ -4,7 +4,7 @@
   "license": "GPLv3",
   "uuid": "reboottouefi@ubaygd.com",
   "url": "https://github.com/UbayGD/reboottouefi",
-  "version": "3",
+  "version": "4",
   "shell-version": [
     "42"
   ]
