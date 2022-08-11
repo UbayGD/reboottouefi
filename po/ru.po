@@ -1,0 +1,21 @@
+# Reboot to UEFI GNOME Extension
+# Andrew Antsiferov <summet.dev@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-11 02:19+0300\n"
+"PO-Revision-Date: 2022-08-11 02:19+0300\n"
+"Last-Translator: Andrew Antsiferov <summet.dev@gmail.com>\n"
+"Language-Team: Russian - Russia <summet.dev@gmail.com>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Gtranslator 40.0\n"
+
+#: extension.js:58
+msgid "Restart to UEFI"
+msgstr "Перезапуск в UEFI"
