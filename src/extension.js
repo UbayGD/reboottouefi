@@ -26,7 +26,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Util = imports.misc.util;
 const ModalDialog = imports.ui.modalDialog;
-const Lang = imports.lang;
 
 const Gettext = imports.gettext;
 const Domain = Gettext.domain(Me.metadata.uuid);
@@ -101,19 +100,19 @@ class Extension {
     dialog.setButtons([
       {
         label: _("Cancel"),
-        action: Lang.bind(dialog, () => {
+        action: () => {
           this._clearIntervals();
           dialog.close();
-        }),
+        },
         key: Clutter.KEY_Escape,
         default: false,
       },
       {
         label: _("Restart"),
-        action: Lang.bind(dialog, () => {
+        action: () => {
           this._clearIntervals();
           this._reboot();
-        }),
+        },
         default: false,
       },
     ]);
