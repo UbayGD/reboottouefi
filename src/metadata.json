@@ -6,6 +6,7 @@
   "url": "https://github.com/UbayGD/reboottouefi",
   "version": "6",
   "shell-version": [
-    "42"
+    "42",
+    "43"
   ]
 }

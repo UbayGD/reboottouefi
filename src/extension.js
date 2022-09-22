@@ -27,6 +27,9 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Util = imports.misc.util;
 const ModalDialog = imports.ui.modalDialog;
 
+const Config = imports.misc.config;
+const [major] = Config.PACKAGE_VERSION.split('.').map(s => Number(s));
+
 const Gettext = imports.gettext;
 const Domain = Gettext.domain(Me.metadata.uuid);
 const _ = Domain.gettext;
@@ -44,22 +47,30 @@ const ManagerInterface = `<node>
 const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
 
 class Extension {
-  #systemIndicator
+  #menu
   #proxy;
   #rebootToUefiItem;
   #counter;
   #seconds;
   #counterIntervalId;
   #messageIntervalId;
+  #isPreQuickSettings;
 
   constructor() {
-    this.#systemIndicator = panel.statusArea.aggregateMenu._system;
+    this.#isPreQuickSettings = !this._checkQuickSettingsSupport();
+    this.#menu = this.#isPreQuickSettings 
+      ? panel.statusArea.aggregateMenu._system._sessionSubMenu.menu 
+      : panel.statusArea.quickSettings._system.quickSettingsItems[0].menu;
   }
 
   enable() {
     this.#proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
-    this.#rebootToUefiItem = new PopupMenu.PopupImageMenuItem(`${_('Restart to UEFI')}...`, '');
+    // TODO add comment
+    const trickySpaces = this.#isPreQuickSettings ? '' : '      ';
+    const itemLabel = `${trickySpaces}${_('Restart to UEFI')}...`;
+    this.#rebootToUefiItem = new PopupMenu.PopupImageMenuItem(itemLabel, '');
+
     this.#rebootToUefiItem.connect('activate', () => {
       this.#counter = 60;
       this.#seconds = this.#counter;
@@ -81,13 +92,17 @@ class Extension {
 
     });
 
-    this.#systemIndicator._sessionSubMenu.menu.addMenuItem(this.#rebootToUefiItem, 2);
+    this.#menu.addMenuItem(this.#rebootToUefiItem, 2);
   }
 
   disable() {
     this.#rebootToUefiItem.destroy();
     this.#rebootToUefiItem = null;
     this.#proxy = null;
+  }
+
+  _checkQuickSettingsSupport() {
+    return major >= 43;
   }
 
   _reboot() {
