@@ -66,7 +66,8 @@ class Extension {
   enable() {
     this.#proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
-    // TODO add comment
+    //  I don't know why but if I added the menu item directly the text appeared too far to the left in Gnome 43. 
+    //  I had to use this little trick of adding whitespaces to make it appear in the right position.
     const trickySpaces = this.#isPreQuickSettings ? '' : '      ';
     const itemLabel = `${trickySpaces}${_('Restart to UEFI')}...`;
     this.#rebootToUefiItem = new PopupMenu.PopupImageMenuItem(itemLabel, '');
