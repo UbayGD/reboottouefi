@@ -47,43 +47,48 @@ const ManagerInterface = `<node>
 const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
 
 class Extension {
-  #menu
-  #proxy;
-  #rebootToUefiItem;
-  #counter;
-  #seconds;
-  #counterIntervalId;
-  #messageIntervalId;
-  #isPreQuickSettings;
+  menu
+  proxy;
+  rebootToUefiItem;
+  /** @type {number} */
+  counter;
+  /** @type {number} */
+  seconds;
+  /** @type {number} */
+  counterIntervalId;
+  /** @type {number} */
+  messageIntervalId;
+  /** @type {boolean} */
+  isPreQuickSettings;
 
   constructor() {
-    this.#isPreQuickSettings = !this._checkQuickSettingsSupport();
-    this.#menu = this.#isPreQuickSettings 
+    this.isPreQuickSettings = !this._checkQuickSettingsSupport();
+    this.menu = this.isPreQuickSettings 
       ? panel.statusArea.aggregateMenu._system._sessionSubMenu.menu 
       : panel.statusArea.quickSettings._system.quickSettingsItems[0].menu;
   }
 
   enable() {
-    this.#proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
+    this.proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
     //  I don't know why but if I added the menu item directly the text appeared too far to the left in Gnome 43. 
     //  I had to use this little trick of adding whitespaces to make it appear in the right position.
-    const trickySpaces = this.#isPreQuickSettings ? '' : '      ';
+    const trickySpaces = this.isPreQuickSettings ? '' : '      ';
     const itemLabel = `${trickySpaces}${_('Restart to UEFI')}...`;
-    this.#rebootToUefiItem = new PopupMenu.PopupImageMenuItem(itemLabel, '');
+    this.rebootToUefiItem = new PopupMenu.PopupImageMenuItem(itemLabel, '');
 
-    this.#rebootToUefiItem.connect('activate', () => {
-      this.#counter = 60;
-      this.#seconds = this.#counter;
+    this.rebootToUefiItem.connect('activate', () => {
+      this.counter = 60;
+      this.seconds = this.counter;
 
       const dialog = this._buildDialog();
       dialog.open();
 
-      this.#counterIntervalId = setInterval(() => {
-        if (this.#counter > 0) {
-          this.#counter--;
-          if (this.#counter % 10 === 0) {
-            this.#seconds = this.#counter;
+      this.counterIntervalId = setInterval(() => {
+        if (this.counter > 0) {
+          this.counter--;
+          if (this.counter % 10 === 0) {
+            this.seconds = this.counter;
           }
         } else {
           this._clearIntervals();
@@ -93,22 +98,23 @@ class Extension {
 
     });
 
-    this.#menu.addMenuItem(this.#rebootToUefiItem, 2);
+    this.menu.addMenuItem(this.rebootToUefiItem, 2);
   }
 
   disable() {
-    this.#rebootToUefiItem.destroy();
-    this.#rebootToUefiItem = null;
-    this.#proxy = null;
+    this.rebootToUefiItem.destroy();
+    this.rebootToUefiItem = null;
+    this.proxy = null;
   }
 
+  /** @returns {boolean} */
   _checkQuickSettingsSupport() {
     return major >= 43;
   }
 
   _reboot() {
-    this.#proxy.SetRebootToFirmwareSetupRemote(true);
-    this.#proxy.RebootRemote(false);
+    this.proxy.SetRebootToFirmwareSetupRemote(true);
+    this.proxy.RebootRemote(false);
   }
 
   _buildDialog() {
@@ -156,7 +162,7 @@ class Extension {
     box.add(new St.Label({ text: '  ' }));
     box.add(dialogMessage);
 
-    this.#messageIntervalId = setInterval(() => {
+    this.messageIntervalId = setInterval(() => {
       dialogMessage?.set_text(this._getDialogMessageText());
     }, 500);
 
@@ -166,12 +172,12 @@ class Extension {
   }
 
   _getDialogMessageText() {
-    return _(`The system will restart automatically in %d seconds.`).replace('%d', this.#seconds);
+    return _(`The system will restart automatically in %d seconds.`).replace('%d', this.seconds);
   }
 
   _clearIntervals() {
-    clearInterval(this.#counterIntervalId);
-    clearInterval(this.#messageIntervalId);
+    clearInterval(this.counterIntervalId);
+    clearInterval(this.messageIntervalId);
   }
 
 }
