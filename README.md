@@ -2,7 +2,11 @@
 
 This is a small Gnome extension that adds the ability to reboot directly to the UEFI.
 
-![Screenshot of the extension option in the Gnome menu](image.png)
+## Gnome 43
+![Screenshot of the extension option in the Gnome 43 menu](images/gnome_43.png)
+
+## Gnome 42
+![Screenshot of the extension option in the Gnome 42 menu](images/gnome_42.png)
 
 <br>
 
@@ -26,5 +30,3 @@ To install the extension just run the **install.sh** script with the following c
 # Notes
 
 - This extension is available in [GNOME Extensions](https://extensions.gnome.org/extension/5105/reboottouefi/).
-
-- This extension has been tested on Gnome 42 only.
