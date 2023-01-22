@@ -63,18 +63,15 @@ class Extension {
 
   constructor() {
     this.isPreQuickSettings = !this._checkQuickSettingsSupport();
-    this.menu = this.isPreQuickSettings 
-      ? panel.statusArea.aggregateMenu._system._sessionSubMenu.menu 
+    this.menu = this.isPreQuickSettings
+      ? panel.statusArea.aggregateMenu._system._sessionSubMenu.menu
       : panel.statusArea.quickSettings._system.quickSettingsItems[0].menu;
   }
 
   enable() {
     this.proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
-    const itemLabel = 'Restart to UEFI...';
-    this.rebootToUefiItem = this.isPreQuickSettings
-      ? new PopupMenu.PopupImageMenuItem(itemLabel, '')
-      : new PopupMenu.PopupMenuItem(itemLabel);
+    this.rebootToUefiItem = new PopupMenu.PopupMenuItem(`${_('Restart to UEFI')}...`);
 
     this.rebootToUefiItem.connect('activate', () => {
       this.counter = 60;
