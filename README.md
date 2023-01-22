@@ -2,11 +2,7 @@
 
 This is a small Gnome extension that adds the ability to reboot directly to the UEFI.
 
-## Gnome 43
 ![Screenshot of the extension option in the Gnome 43 menu](images/gnome_43.png)
-
-## Gnome 42
-![Screenshot of the extension option in the Gnome 42 menu](images/gnome_42.png)
 
 <br>
 
