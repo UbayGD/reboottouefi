@@ -1,0 +1,31 @@
+# Reboot to UEFI Gnome Extension
+# Wolf <core.dump@mail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-29 19:54+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Wolf <core.dump@mail.com>\n"
+"Language-Team: Italian \n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js:63,122
+msgid "Restart to UEFI"
+msgstr "Riavvia con UEFI"
+
+#: extension.js:103
+msgid "Cancel"
+msgstr "Annulla"
+
+#: extension.js:112
+msgid "Restart"
+msgstr "Riavvia"
+
+#: extension.js:154
+msgid "The system will restart automatically in %d seconds."
+msgstr "Il sistema verrà riavviato automaticamente tra %d secondi."
