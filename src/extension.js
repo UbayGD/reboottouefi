@@ -18,21 +18,15 @@
 
 /* exported init */
 
-const { Gio, Clutter, St, Pango } = imports.gi;
-const Main = imports.ui.main;
-const { panel } = Main;
-const PopupMenu = imports.ui.popupMenu;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Util = imports.misc.util;
-const ModalDialog = imports.ui.modalDialog;
-
-const Config = imports.misc.config;
-const [major] = Config.PACKAGE_VERSION.split('.').map(s => Number(s));
-
-const Gettext = imports.gettext;
-const Domain = Gettext.domain(Me.metadata.uuid);
-const _ = Domain.gettext;
+import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
+import Clutter from 'gi://Clutter';
+import St from 'gi://St';
+import Pango from 'gi://Pango';
+import { panel } from 'resource:///org/gnome/shell/ui/main.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as ModalDialog from 'resource:///org/gnome/shell/ui/modalDialog.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 const ManagerInterface = `<node>
   <interface name="org.freedesktop.login1.Manager">
@@ -46,8 +40,8 @@ const ManagerInterface = `<node>
 </node>`;
 const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
 
-class Extension {
-  menu
+export default class RebootToUefiExtension extends Extension {
+  menu;
   proxy;
   rebootToUefiItem;
   /** @type {number} */
@@ -58,17 +52,12 @@ class Extension {
   counterIntervalId;
   /** @type {number} */
   messageIntervalId;
-  /** @type {boolean} */
-  isPreQuickSettings;
+  sourceId;
 
-  constructor() {
-    this.isPreQuickSettings = !this._checkQuickSettingsSupport();
-    this.menu = this.isPreQuickSettings
-      ? panel.statusArea.aggregateMenu._system._sessionSubMenu.menu
-      : panel.statusArea.quickSettings._system.quickSettingsItems[0].menu;
-  }
+  _modifySystemItem() {
+    this.menu = panel.statusArea.quickSettings._system?.quickSettingsItems[0].menu;
+    this.initTranslations(this.metadata.uuid);
 
-  enable() {
     this.proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
     this.rebootToUefiItem = new PopupMenu.PopupMenuItem(`${_('Restart to UEFI')}...`);
@@ -97,15 +86,37 @@ class Extension {
     this.menu.addMenuItem(this.rebootToUefiItem, 2);
   }
 
-  disable() {
-    this.rebootToUefiItem.destroy();
-    this.rebootToUefiItem = null;
-    this.proxy = null;
+  _queueModifySystemItem() {
+    this.sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+        if (!panel.statusArea.quickSettings._system)
+            return GLib.SOURCE_CONTINUE;
+
+        this._modifySystemItem();
+        return GLib.SOURCE_REMOVE;
+    });
   }
 
-  /** @returns {boolean} */
-  _checkQuickSettingsSupport() {
-    return major >= 43;
+  constructor(metadata) {
+    super(metadata);
+  }
+
+  enable() {
+    if (!panel.statusArea.quickSettings._system) {
+      this._queueModifySystemItem();
+    } else {
+      this._modifySystemItem();
+    }
+  }
+
+  disable() {
+    this.rebootToUefiItem?.destroy();
+    this.rebootToUefiItem = null;
+    this.proxy = null;
+    if (this.sourceId) {
+      GLib.Source.remove(this.sourceId);
+      this.sourceId = null;
+    }
+    this._settings = null;
   }
 
   _reboot() {
@@ -176,9 +187,4 @@ class Extension {
     clearInterval(this.messageIntervalId);
   }
 
-}
-
-function init() {
-    ExtensionUtils.initTranslations(Me.metadata.uuid);
-    return new Extension();
 }
