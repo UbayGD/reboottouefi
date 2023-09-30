@@ -6,7 +6,15 @@ This is a small Gnome extension that adds the ability to reboot directly to the 
 
 <br>
 
-# Build the extension
+# Gnome Extensions
+
+This extension is available in [GNOME Extensions](https://extensions.gnome.org/extension/5105/reboottouefi/).
+
+
+<br>
+
+
+### Build the extension
 
 To build the extension run the following command:
 
@@ -14,15 +22,10 @@ To build the extension run the following command:
 
 If all goes well this will generate a zip file in the project folder.
 
-# Install the extension
+### Install the extension
 
 To install the extension just run the **install.sh** script with the following command:
 
 `$ sh install.sh`
 
-<hr>
-<br>
 
-# Notes
-
-- This extension is available in [GNOME Extensions](https://extensions.gnome.org/extension/5105/reboottouefi/).
