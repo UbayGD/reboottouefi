@@ -56,7 +56,6 @@ export default class RebootToUefiExtension extends Extension {
 
   _modifySystemItem() {
     this.menu = panel.statusArea.quickSettings._system?.quickSettingsItems[0].menu;
-    this.initTranslations(this.metadata.uuid);
 
     this.proxy = new Manager(Gio.DBus.system, 'org.freedesktop.login1', '/org/freedesktop/login1');
 
@@ -109,6 +108,7 @@ export default class RebootToUefiExtension extends Extension {
   }
 
   disable() {
+    this._clearIntervals();
     this.rebootToUefiItem?.destroy();
     this.rebootToUefiItem = null;
     this.proxy = null;
@@ -116,7 +116,6 @@ export default class RebootToUefiExtension extends Extension {
       GLib.Source.remove(this.sourceId);
       this.sourceId = null;
     }
-    this._settings = null;
   }
 
   _reboot() {
