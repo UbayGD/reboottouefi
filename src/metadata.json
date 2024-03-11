@@ -4,9 +4,6 @@
   "license": "GPLv3",
   "uuid": "reboottouefi@ubaygd.com",
   "url": "https://github.com/UbayGD/reboottouefi",
-  "version": "16",
-  "shell-version": [
-    "45"
-  ],
+  "shell-version": ["45"],
   "gettext-domain": "reboottouefi@ubaygd.com"
 }

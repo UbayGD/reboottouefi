@@ -1,0 +1,27 @@
+{
+    "name": "reboot-to-uefi",
+    "version": "1.0.0",
+    "description": "This is a small Gnome extension that adds the ability to reboot directly to the UEFI.",
+    "type": "module",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/example/my-extension.git"
+    },
+    "author": "UbayGD <aubay.glezdiaz@gmail.com>",
+    "license": "GPL-3.0-only",
+    "bugs": {
+        "url": "https://github.com/UbayGD/reboottouefi/issues"
+    },
+    "homepage": "https://github.com/UbayGD/reboottouefi",
+    "sideEffects": false,
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "eslint-plugin-jsdoc": "^48.2.1",
+        "typescript": "^5.4.2"
+    },
+    "dependencies": {
+        "@girs/gjs": "^3.2.9",
+        "@girs/gnome-shell": "^45.0.0-beta9"
+    }
+}

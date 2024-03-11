@@ -4,7 +4,9 @@
 
 mkdir .build/
 
-cp src/extension.js .build/
+tsc
+
+cp dist/extension.js .build/
 cp src/metadata.json .build/
 cp -R po .build/
 
