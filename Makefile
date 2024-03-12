@@ -9,7 +9,7 @@ node_modules: package.json
 	npm install
 
 dist/extension.js: node_modules
-	tsc
+	@ ./node_modules/typescript/bin/tsc
 
 compile-po: po/*.po
 	@for file in po/*.po; do \
