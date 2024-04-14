@@ -31,7 +31,7 @@ import {
   gettext as _,
 } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-const ManagerInterface = `<node>
+const ManagerInterface: string = `<node>
   <interface name="org.freedesktop.login1.Manager">
     <method name="SetRebootToFirmwareSetup">
       <arg type="b" direction="in"/>
@@ -44,20 +44,20 @@ const ManagerInterface = `<node>
 const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
 
 export default class RebootToUefiExtension extends Extension {
-  menu: any;
-  proxy!: any | null;
-  rebootToUefiItem!: PopupMenu.PopupMenuItem | null;
-  counter!: number;
-  seconds!: number;
-  counterIntervalId!: GLib.Source;
-  messageIntervalId!: GLib.Source;
-  sourceId!: number | null;
+  private menu: any;
+  private proxy!: any | null;
+  private rebootToUefiItem!: PopupMenu.PopupMenuItem | null;
+  private counter!: number;
+  private seconds!: number;
+  private counterIntervalId!: GLib.Source;
+  private messageIntervalId!: GLib.Source;
+  private sourceId!: number | null;
 
   constructor(metadata: any) {
     super(metadata);
   }
 
-  _modifySystemItem() {
+  private modifySystemItem(): void {
     this.menu =
       panel.statusArea.quickSettings._system?.quickSettingsItems[0].menu;
 
@@ -75,7 +75,7 @@ export default class RebootToUefiExtension extends Extension {
       this.counter = 60;
       this.seconds = this.counter;
 
-      const dialog = this._buildDialog();
+      const dialog = this.buildDialog();
       dialog.open(Date.now(), true);
 
       this.counterIntervalId = setInterval(() => {
@@ -85,8 +85,8 @@ export default class RebootToUefiExtension extends Extension {
             this.seconds = this.counter;
           }
         } else {
-          this._clearIntervals();
-          this._reboot();
+          this.clearIntervals();
+          this.reboot();
         }
       }, 1000);
     });
@@ -94,25 +94,25 @@ export default class RebootToUefiExtension extends Extension {
     this.menu.addMenuItem(this.rebootToUefiItem, 2);
   }
 
-  _queueModifySystemItem() {
+  private queueModifySystemItem(): void {
     this.sourceId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
       if (!panel.statusArea.quickSettings._system) return GLib.SOURCE_CONTINUE;
 
-      this._modifySystemItem();
+      this.modifySystemItem();
       return GLib.SOURCE_REMOVE;
     });
   }
 
   enable() {
     if (!panel.statusArea.quickSettings._system) {
-      this._queueModifySystemItem();
+      this.queueModifySystemItem();
     } else {
-      this._modifySystemItem();
+      this.modifySystemItem();
     }
   }
 
   disable() {
-    this._clearIntervals();
+    this.clearIntervals();
     this.rebootToUefiItem?.destroy();
     this.rebootToUefiItem = null;
     this.proxy = null;
@@ -122,18 +122,18 @@ export default class RebootToUefiExtension extends Extension {
     }
   }
 
-  _reboot() {
+  private reboot(): void {
     this.proxy?.SetRebootToFirmwareSetupRemote(true);
     this.proxy?.RebootRemote(false);
   }
 
-  _buildDialog() {
+  private buildDialog(): ModalDialog.ModalDialog {
     const dialog = new ModalDialog.ModalDialog({ styleClass: 'modal-dialog' });
     dialog.setButtons([
       {
         label: _('Cancel'),
         action: () => {
-          this._clearIntervals();
+          this.clearIntervals();
           dialog.close(Date.now());
         },
         key: Clutter.KEY_Escape,
@@ -142,8 +142,8 @@ export default class RebootToUefiExtension extends Extension {
       {
         label: _('Restart'),
         action: () => {
-          this._clearIntervals();
-          this._reboot();
+          this.clearIntervals();
+          this.reboot();
         },
         default: false,
       },
@@ -156,7 +156,7 @@ export default class RebootToUefiExtension extends Extension {
     });
 
     let dialogMessage = new St.Label({
-      text: this._getDialogMessageText(),
+      text: this.getDialogMessageText(),
     });
     dialogMessage.clutterText.ellipsize = Pango.EllipsizeMode.NONE;
     dialogMessage.clutterText.lineWrap = true;
@@ -173,7 +173,7 @@ export default class RebootToUefiExtension extends Extension {
     box.add_child(dialogMessage);
 
     this.messageIntervalId = setInterval(() => {
-      dialogMessage?.set_text(this._getDialogMessageText());
+      dialogMessage?.set_text(this.getDialogMessageText());
     }, 500);
 
     dialog.contentLayout.add_child(box);
@@ -181,14 +181,14 @@ export default class RebootToUefiExtension extends Extension {
     return dialog;
   }
 
-  _getDialogMessageText() {
+  private getDialogMessageText(): string {
     return _(`The system will restart automatically in %d seconds.`).replace(
       '%d',
       String(this.seconds),
     );
   }
 
-  _clearIntervals() {
+  private clearIntervals(): void {
     clearInterval(this.counterIntervalId);
     clearInterval(this.messageIntervalId);
   }
