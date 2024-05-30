@@ -31,7 +31,7 @@ import {
   gettext as _,
 } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-const ManagerInterface: string = `<node>
+const ManagerInterfaceUEFI: string = `<node>
   <interface name="org.freedesktop.login1.Manager">
     <method name="SetRebootToFirmwareSetup">
       <arg type="b" direction="in"/>
@@ -41,7 +41,24 @@ const ManagerInterface: string = `<node>
     </method>
   </interface>
 </node>`;
-const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
+
+const ManagerInterfaceBootEntries: string = `<node>
+<interface name="org.freedesktop.login1.Manager">
+  <property name="BootLoaderEntries" type="as" access="read"/>
+  <method name="SetRebootToBootLoaderEntry">
+    <arg type="s" direction="in"/>
+  </method>
+  <method name="Reboot">
+    <arg type="b" direction="in"/>
+  </method>
+</interface>
+</node>`;
+
+const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterfaceUEFI);
+
+const ManagerBootEntries = Gio.DBusProxy.makeProxyWrapper(
+  ManagerInterfaceBootEntries,
+);
 
 export default class RebootToUefiExtension extends Extension {
   private menu: any;
@@ -62,6 +79,12 @@ export default class RebootToUefiExtension extends Extension {
       panel.statusArea.quickSettings._system?.quickSettingsItems[0].menu;
 
     this.proxy = Manager(
+      Gio.DBus.system,
+      'org.freedesktop.login1',
+      '/org/freedesktop/login1',
+    );
+
+    let testingProxy: Gio.DBusProxy = ManagerBootEntries(
       Gio.DBus.system,
       'org.freedesktop.login1',
       '/org/freedesktop/login1',
