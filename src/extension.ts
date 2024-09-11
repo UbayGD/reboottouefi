@@ -76,7 +76,7 @@ export default class RebootToUefiExtension extends Extension {
       this.seconds = this.counter;
 
       const dialog = this.buildDialog();
-      dialog.open(Date.now(), true);
+      dialog.open();
 
       this.counterIntervalId = setInterval(() => {
         if (this.counter > 0) {
@@ -134,7 +134,7 @@ export default class RebootToUefiExtension extends Extension {
         label: _('Cancel'),
         action: () => {
           this.clearIntervals();
-          dialog.close(Date.now());
+          dialog.close();
         },
         key: Clutter.KEY_Escape,
         default: false,
