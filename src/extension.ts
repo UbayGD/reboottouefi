@@ -41,19 +41,11 @@ const ManagerInterface: string = `<node>
     </method>
   </interface>
 </node>`;
-const Manager = Gio.DBusProxy.makeProxyWrapper<{
-  SetRebootToFirmwareSetup(arg0: boolean): void;
-  RebootRemote(arg0: boolean): void;
-}>(ManagerInterface);
+const Manager = Gio.DBusProxy.makeProxyWrapper(ManagerInterface);
 
 export default class RebootToUefiExtension extends Extension {
   private menu: any;
-  private proxy!:
-    | ({
-        SetRebootToFirmwareSetup(arg0: boolean): void;
-        RebootRemote(arg0: boolean): void;
-      } & Gio.DBusProxy)
-    | null;
+  private proxy!: any | null;
   private rebootToUefiItem!: PopupMenu.PopupMenuItem | null;
   private counter!: number;
   private seconds!: number;
@@ -84,7 +76,7 @@ export default class RebootToUefiExtension extends Extension {
       this.seconds = this.counter;
 
       const dialog = this.buildDialog();
-      dialog.open();
+      dialog.open(Date.now(), true);
 
       this.counterIntervalId = setInterval(() => {
         if (this.counter > 0) {
@@ -131,7 +123,7 @@ export default class RebootToUefiExtension extends Extension {
   }
 
   private reboot(): void {
-    this.proxy?.SetRebootToFirmwareSetup(true);
+    this.proxy?.SetRebootToFirmwareSetupRemote(true);
     this.proxy?.RebootRemote(false);
   }
 
@@ -142,7 +134,7 @@ export default class RebootToUefiExtension extends Extension {
         label: _('Cancel'),
         action: () => {
           this.clearIntervals();
-          dialog.close();
+          dialog.close(Date.now());
         },
         key: Clutter.KEY_Escape,
         default: false,
